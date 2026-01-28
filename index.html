@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Meta de Receita Líquida</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="odo">
+
+<header class="topo">
+    <h1>Controle de Meta de Receita</h1>
+
+    <div class="menu">
+        <button id="btn-med" onclick="abrirPagina('med')">MED</button>
+        <button id="btn-odo" onclick="abrirPagina('odo')">ODO</button>
+
+        <button class="btn-acomp" onclick="irParaAcompanhamento()">
+            📊 Acompanhamento
+        </button>
+        <button class="btn-hub" onclick="voltarMenu()" title="Voltar ao Hub">
+    ⬅ Hub
+</button>
+
+    </div>
+    
+
+
+</header>
+
+
+<main>
+
+    <!-- ================= MED ================= -->
+    <section id="pagina-med" class="pagina hidden">
+        <h1>Meta Receita Líquida – MED</h1>
+
+    
+        <section class="box">
+            <h2>Configuração da Meta</h2>
+            <div class="form-grid">
+                <input type="month" id="mes-med" onchange="carregarConfiguracao('med')">
+                <input type="number" id="meta-med" placeholder="Meta mensal">
+                <input type="number" id="dias-med" placeholder="Dias úteis">
+            </div>
+            <button onclick="salvarConfig('med')">Salvar Configuração</button>
+        </section>
+
+        <section class="dashboard">
+            <div class="card">
+                <span>Receita Líquida Acumulada</span>
+                <strong id="acum-med">R$ 0,00</strong>
+            </div>
+            <div class="card">
+                <span>Meta Mensal</span>
+                <strong id="metaView-med">R$ 0,00</strong>
+            </div>
+            <div class="card destaque">
+                <span>Meta Diária Atual</span>
+                <strong id="diaria-med">R$ 0,00</strong>
+            </div>
+            <div class="card">
+                <span>Falta Produzir</span>
+                <strong id="falta-med">R$ 0,00</strong>
+            </div>
+        </section>
+
+        <section class="box">
+            <h2>Lançamento Diário</h2>
+            <div class="form-grid">
+                <input type="date" id="data-med">
+                <input type="number" id="prod-med" placeholder="Produção do dia">
+                <input type="number" id="rep-med" placeholder="Repasse médico">
+            </div>
+            <button onclick="lancarDia('med')">Lançar</button>
+        </section>
+
+        <section class="box">
+            <h2>Histórico</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Produção</th>
+                        <th>Repasse</th>
+                        <th>Receita Líquida</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="hist-med"></tbody>
+            </table>
+        </section>
+    </section>
+
+    <!-- ================= ODO ================= -->
+    <section id="pagina-odo" class="pagina hidden">
+        <h1>Meta Receita Líquida – ODO</h1>
+
+     
+
+        <section class="box">
+            <h2>Configuração da Meta</h2>
+            <div class="form-grid">
+                <input type="month" id="mes-odo" onchange="carregarConfiguracao('odo')">
+                <input type="number" id="meta-odo" placeholder="Meta mensal">
+                <input type="number" id="dias-odo" placeholder="Dias úteis">
+            </div>
+            <button onclick="salvarConfig('odo')">Salvar Configuração</button>
+        </section>
+
+        <section class="dashboard">
+            <div class="card">
+                <span>Receita Líquida Acumulada</span>
+                <strong id="acum-odo">R$ 0,00</strong>
+            </div>
+            <div class="card">
+                <span>Meta Mensal</span>
+                <strong id="metaView-odo">R$ 0,00</strong>
+            </div>
+            <div class="card destaque">
+                <span>Meta Diária Atual</span>
+                <strong id="diaria-odo">R$ 0,00</strong>
+            </div>
+            <div class="card">
+                <span>Falta Produzir</span>
+                <strong id="falta-odo">R$ 0,00</strong>
+            </div>
+        </section>
+
+        <section class="box">
+            <h2>Lançamento Diário</h2>
+            <div class="form-grid">
+                <input type="date" id="data-odo">
+                <input type="number" id="prod-odo" placeholder="Produção do dia">
+            </div>
+            <button onclick="lancarDia('odo')">Lançar</button>
+        </section>
+
+        <section class="box">
+            <h2>Histórico</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Produção</th>
+                        <th>Repasse</th>
+                        <th>Receita Líquida</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="hist-odo"></tbody>
+            </table>
+        </section>
+    </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

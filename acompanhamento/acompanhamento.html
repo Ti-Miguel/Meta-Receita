@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Acompanhamento de Meta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <link rel="stylesheet" href="acompanhamento.css">
+</head>
+<body class="odo">
+
+<header class="topo">
+    <h1>Acompanhamento de Meta</h1>
+
+    <div class="menu">
+        <button id="btn-odo" class="ativo" onclick="trocarTipo('odo')">ODO</button>
+        <button id="btn-med" onclick="trocarTipo('med')">MED</button>
+
+        <button class="btn-voltar" onclick="voltarSistema()">
+            ⬅ Voltar
+        </button>
+    </div>
+</header>
+
+
+<main>
+
+    <div class="abas">
+        <button id="btn-diario" class="ativo" onclick="trocarModo('diario')">📆 Diário</button>
+        <button id="btn-semanal" onclick="trocarModo('semanal')">📊 Semanal</button>
+    </div>
+
+    <section class="card-acompanhamento">
+        <h2 id="titulo">ACOMPANHAMENTO</h2>
+        <p class="periodo" id="periodo">–</p>
+
+        <div id="conteudo"></div>
+    </section>
+
+</main>
+
+<script src="acompanhamento.js"></script>
+</body>
+</html>

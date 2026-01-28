@@ -1,0 +1,147 @@
+:root {
+    --principal: #1E5AA8;
+    --verde: #00b03e;
+    --vermelho: #d9534f;
+    --cinza: #666;
+    --bg: #f1f3f6;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 24px;
+    color: #222;
+}
+
+body.med {
+    --principal: #B3261E;
+}
+
+body.odo {
+    --principal: #1E5AA8;
+}
+
+.topo {
+    background: #fff;
+    padding: 16px 24px;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topo h1 {
+    margin: 0;
+    font-size: 20px;
+    color: var(--principal);
+}
+
+.menu button {
+    padding: 8px 22px;
+    border-radius: 20px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+    background: var(--principal);
+    opacity: 0.5;
+}
+
+.menu button.ativo {
+    opacity: 1;
+}
+
+.abas {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.abas button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.abas button.ativo {
+    background: var(--principal);
+    color: #fff;
+}
+
+.card-acompanhamento {
+    background: #fff;
+    max-width: 420px;
+    margin: auto;
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+.card-acompanhamento h2 {
+    margin: 0;
+    color: var(--principal);
+    font-size: 18px;
+}
+
+.periodo {
+    font-size: 14px;
+    color: var(--cinza);
+    margin-bottom: 16px;
+}
+
+.linha {
+    height: 1px;
+    background: #eee;
+    margin: 16px 0;
+}
+
+.linha-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.linha-info span {
+    color: var(--cinza);
+}
+
+.linha-info strong {
+    font-size: 16px;
+}
+
+.linha-info.destaque strong {
+    color: var(--principal);
+    font-size: 18px;
+}
+
+.linha-info.negativo strong {
+    color: var(--vermelho);
+}
+
+.linha-info.positivo strong {
+    color: var(--verde);
+}
+
+.vazio {
+    text-align: center;
+    color: var(--cinza);
+    padding: 30px 0;
+}
+
+.btn-voltar {
+    margin-left: 12px;
+    background: #111;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+

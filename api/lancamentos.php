@@ -1,0 +1,67 @@
+<?php
+require 'db.php';
+header('Content-Type: application/json');
+
+$acao = $_GET['acao'] ?? '';
+
+/* ===== LISTAR ===== */
+if ($acao === 'listar') {
+    $tipo = $_GET['tipo'];
+    $mes  = $_GET['mes'];
+
+    $stmt = $conn->prepare(
+        "SELECT * FROM lancamentos
+         WHERE tipo = ? AND mes = ?
+         ORDER BY data DESC, id DESC"
+    );
+    $stmt->bind_param("ss", $tipo, $mes);
+    $stmt->execute();
+
+    echo json_encode($stmt->get_result()->fetch_all(MYSQLI_ASSOC));
+    exit;
+}
+
+/* ===== SALVAR / EDITAR ===== */
+if ($acao === 'salvar') {
+    $id   = $_POST['id'] ?? null;
+    $tipo = $_POST['tipo'];
+    $data = $_POST['data'];
+    $prod = $_POST['prod'];
+    $rep  = $_POST['rep'] ?? 0;
+    $liq  = $prod - $rep;
+    $mes  = substr($data, 0, 7);
+
+    if ($id) {
+        // EDITAR
+        $stmt = $conn->prepare(
+            "UPDATE lancamentos
+             SET data = ?, producao = ?, repasse = ?, liquido = ?, mes = ?
+             WHERE id = ?"
+        );
+        $stmt->bind_param("sdddsi", $data, $prod, $rep, $liq, $mes, $id);
+        $stmt->execute();
+    } else {
+        // NOVO
+        $stmt = $conn->prepare(
+            "INSERT INTO lancamentos (tipo, data, producao, repasse, liquido, mes)
+             VALUES (?, ?, ?, ?, ?, ?)"
+        );
+        $stmt->bind_param("ssddds", $tipo, $data, $prod, $rep, $liq, $mes);
+        $stmt->execute();
+    }
+
+    echo json_encode(["ok" => true]);
+    exit;
+}
+
+/* ===== EXCLUIR ===== */
+if ($acao === 'excluir') {
+    $id = $_POST['id'];
+
+    $stmt = $conn->prepare("DELETE FROM lancamentos WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+
+    echo json_encode(["ok" => true]);
+    exit;
+}
