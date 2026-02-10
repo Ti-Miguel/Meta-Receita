@@ -65,3 +65,24 @@ if ($acao === 'excluir') {
     echo json_encode(["ok" => true]);
     exit;
 }
+
+/* ===== LISTAR POR PERÍODO ===== */
+if ($acao === 'listar_periodo') {
+    $tipo   = $_GET['tipo'];
+    $inicio = $_GET['inicio'];
+    $fim    = $_GET['fim'];
+
+    $stmt = $conn->prepare("
+    SELECT *
+    FROM lancamentos
+    WHERE tipo = ?
+      AND DATE(data) BETWEEN ? AND ?
+    ORDER BY data ASC
+");
+    $stmt->bind_param("sss", $tipo, $inicio, $fim);
+$stmt->execute();
+echo json_encode($stmt->get_result()->fetch_all(MYSQLI_ASSOC));
+exit;
+
+}
+
