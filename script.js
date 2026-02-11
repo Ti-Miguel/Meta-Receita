@@ -125,10 +125,13 @@ function lancarDia(tipo) {
     })
     .then(res => res.json())
     .then(() => {
-        editando[tipo] = null;
-        carregarLancamentos(tipo);
-        limparFormulario(tipo);
-    });
+    editando[tipo] = null;
+    limparFormulario(tipo);
+
+    // 🔄 recarrega tudo para atualizar diário e semanal
+    carregarDados();
+});
+
 }
 
 function carregarLancamentos(tipo) {

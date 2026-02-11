@@ -8,8 +8,9 @@ function mesAtual() {
     return new Date().toISOString().slice(0, 7);
 }
 
-function formatarData(d) {
-    return new Date(d).toLocaleDateString('pt-BR');
+function formatarData(dataStr) {
+    const [ano, mes, dia] = dataStr.split('-').map(Number);
+    return new Date(ano, mes - 1, dia).toLocaleDateString('pt-BR');
 }
 
 /* ===== CONTROLES ===== */
@@ -36,7 +37,8 @@ function trocarModo(modo) {
 
 /* ===== BUSCA DADOS ===== */
 function carregarDados() {
-    const mes = mesAtual();
+    const hoje = new Date(); // ✅ ADICIONADO
+    const mes = hoje.toISOString().slice(0, 7);
 
     fetch(`../api/config.php?acao=buscar&tipo=${tipoAtual}&mes=${mes}`)
         .then(res => res.json())
@@ -52,18 +54,31 @@ function carregarDados() {
                 lancamentos: []
             };
 
-            fetch(`../api/lancamentos.php?acao=listar&tipo=${tipoAtual}&mes=${mes}`)
+fetch(`../api/lancamentos.php?acao=listar_periodo&tipo=${tipoAtual}&inicio=${mes}-01&fim=${mes}-31`)
                 .then(res => res.json())
                 .then(lancamentos => {
-                    dados[`${mes}_${tipoAtual}`].lancamentos = lancamentos.map(l => ({
-                        data: l.data,
-                        liq: Number(l.liquido)
-                    }));
 
-                    render();
-                });
+    console.log('Lançamentos recebidos do backend:', lancamentos);
+
+    dados[`${mes}_${tipoAtual}`].lancamentos = lancamentos
+        .map(l => ({
+            data: l.data,
+            liq: Number(l.liquido)
+        }))
+        .sort((a, b) => new Date(a.data) - new Date(b.data));
+
+    console.log(
+        'Datas após map/sort:',
+        dados[`${mes}_${tipoAtual}`].lancamentos.map(l => l.data)
+    );
+
+    render();
+});
+
+
         });
 }
+
 
 
 /* ===== RENDER ===== */
@@ -71,15 +86,13 @@ function render() {
     modoAtual === 'diario' ? renderDiario() : renderSemanal();
 }
 
-function ultimoLancamento() {
-    return lancamentosAtuais
-        .slice()
-        .sort((a, b) => new Date(b.data) - new Date(a.data))[0];
-}
+
 
 /* ===== DIÁRIO ===== */
 function renderDiario() {
-    const mes = mesAtual();
+    const hoje = new Date(); // ✅ ADICIONADO
+    const mes = hoje.toISOString().slice(0, 7);
+
     const chave = `${mes}_${tipoAtual}`;
     const d = dados[chave];
 
@@ -89,9 +102,7 @@ function renderDiario() {
 
     const metaDiaria = d.meta / d.dias;
 
-    const ult = d.lancamentos
-        .slice()
-        .sort((a, b) => new Date(b.data) - new Date(a.data))[0];
+    const ult = d.lancamentos[d.lancamentos.length - 1];
 
     const produzido = ult.liq;
     const diferenca = produzido - metaDiaria;
@@ -118,7 +129,9 @@ function renderDiario() {
 
 /* ===== SEMANAL ===== */
 function renderSemanal() {
-    const mes = mesAtual();
+    const hoje = new Date();
+const mes = hoje.toISOString().slice(0, 7);
+
     const chave = `${mes}_${tipoAtual}`;
     const d = dados[chave];
 
@@ -126,27 +139,29 @@ function renderSemanal() {
         return mostrarVazio();
     }
 
-    // 🔹 ordenar lançamentos por data (ASC)
+    // 🔹 ordenar lançamentos
     const lancamentosOrdenados = d.lancamentos
         .slice()
         .sort((a, b) => dataLocal(a.data) - dataLocal(b.data));
 
-    // 🔹 usar a PRIMEIRA data como referência da semana
-    const primeiraData = dataLocal(lancamentosOrdenados[0].data);
+    const ultimaDataLanc = dataLocal(
+        lancamentosOrdenados[lancamentosOrdenados.length - 1].data
+    );
 
-    // 🔹 encontrar segunda-feira dessa semana
-    const inicio = new Date(primeiraData);
-    const diaSemana = inicio.getDay(); // 0=dom,1=seg...
-    const diffSegunda = diaSemana === 0 ? -6 : 1 - diaSemana;
-    inicio.setDate(inicio.getDate() + diffSegunda);
-    inicio.setHours(0, 0, 0, 0);
+hoje.setHours(0,0,0,0);
 
-    // 🔹 domingo da mesma semana
-    const fim = new Date(inicio);
-    fim.setDate(inicio.getDate() + 6);
-    fim.setHours(23, 59, 59, 999);
+// achar segunda da semana atual
+const inicio = new Date(hoje);
+const diaSemana = inicio.getDay();
+const diffSegunda = diaSemana === 0 ? -6 : 1 - diaSemana;
+inicio.setDate(inicio.getDate() + diffSegunda);
 
-    // 🔹 filtrar lançamentos da semana
+// domingo
+const fim = new Date(inicio);
+fim.setDate(inicio.getDate() + 6);
+
+
+    // 🔹 filtrar lançamentos da semana atual
     const lancSemana = lancamentosOrdenados.filter(l => {
         const dataLanc = dataLocal(l.data);
         return dataLanc >= inicio && dataLanc <= fim;
@@ -162,12 +177,10 @@ function renderSemanal() {
         0
     );
 
-    // 🔹 planejado
     const metaDiaria = d.meta / d.dias;
     const esperadoSemana = metaDiaria * 7;
     const resultadoSemana = produzidoSemana - esperadoSemana;
 
-    // 🔹 produzido no mês
     const produzidoMes = d.lancamentos.reduce(
         (s, l) => s + Number(l.liq || 0),
         0
@@ -175,7 +188,7 @@ function renderSemanal() {
 
     preencher(
         'ACOMPANHAMENTO SEMANAL',
-        `Semana fechada (Seg–Dom) • ${formatarData(inicio)} a ${formatarData(fim)}`,
+        `Semana atual (Seg–Dom) • ${formatarData(inicio)} a ${formatarData(fim)}`,
         [
             linha('Planejado da semana', esperadoSemana),
             linha('Produzido na semana', produzidoSemana),
@@ -190,6 +203,7 @@ function renderSemanal() {
         ]
     );
 }
+
 
 
 function dataLocal(yyyyMmDd) {
@@ -239,11 +253,10 @@ function voltarSistema() {
 
 /* ===== SEMANA ===== */
 function semanaSegundaSabado() {
-    const hoje = new Date();
+    const hoje = new Date(); // ✅ ADICIONADO
 
-    // volta até o último sábado fechado
     const d = new Date(hoje);
-    while (d.getDay() !== 6) { // 6 = sábado
+    while (d.getDay() !== 6) {
         d.setDate(d.getDate() - 1);
     }
 
@@ -272,3 +285,7 @@ function moeda(v) {
 }
 
 document.addEventListener('DOMContentLoaded', carregarDados);
+
+window.addEventListener('focus', carregarDados);
+
+
