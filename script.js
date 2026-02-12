@@ -108,11 +108,22 @@ function lancarDia(tipo) {
         rep = Number(document.getElementById('rep-med').value) || 0;
     }
 
+    const mes = document.getElementById(`mes-${tipo}`).value;
+const chave = `${mes}_${tipo}`;
+const d = dados[chave];
+
+const acumulado = d.lancamentos.reduce((s, l) => s + l.liq, 0);
+const diasRestantes = Math.max(d.dias - d.lancamentos.length, 1);
+const metaDia = (d.meta - acumulado) / diasRestantes;
+
+
     const formData = new FormData();
     formData.append('tipo', tipo);
     formData.append('data', data);
     formData.append('prod', prod);
     formData.append('rep', rep);
+    formData.append('meta_dia', metaDia.toFixed(2));
+
 
     // 👇 SE estiver editando, manda o ID
     if (editando[tipo]) {

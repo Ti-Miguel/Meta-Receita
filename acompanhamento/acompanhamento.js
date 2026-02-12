@@ -103,7 +103,7 @@ function render() {
 
 /* ===== DIÁRIO ===== */
 function renderDiario() {
-    const hoje = new Date(); // ✅ ADICIONADO
+    const hoje = new Date();
     const mes = hoje.toISOString().slice(0, 7);
 
     const chave = `${mes}_${tipoAtual}`;
@@ -113,9 +113,11 @@ function renderDiario() {
         return mostrarVazio();
     }
 
-    const metaDiaria = d.meta / d.dias;
-
+    // 👇 PRIMEIRO pega o último lançamento
     const ult = d.lancamentos[d.lancamentos.length - 1];
+
+    // 👇 DEPOIS usa ele
+    const metaDiaria = ult.meta_dia ?? (d.meta / d.dias);
 
     const produzido = ult.liq;
     const diferenca = produzido - metaDiaria;

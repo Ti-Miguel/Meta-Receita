@@ -30,23 +30,27 @@ if ($acao === 'salvar') {
     $rep  = $_POST['rep'] ?? 0;
     $liq  = $prod - $rep;
     $mes  = substr($data, 0, 7);
+    $meta_dia = $_POST['meta_dia'] ?? null;
+
 
     if ($id) {
         // EDITAR
-        $stmt = $conn->prepare(
-            "UPDATE lancamentos
-             SET data = ?, producao = ?, repasse = ?, liquido = ?, mes = ?
-             WHERE id = ?"
-        );
-        $stmt->bind_param("sdddsi", $data, $prod, $rep, $liq, $mes, $id);
+       $stmt = $conn->prepare(
+    "UPDATE lancamentos
+     SET data = ?, producao = ?, repasse = ?, liquido = ?, mes = ?, meta_dia = ?
+     WHERE id = ?"
+);
+$stmt->bind_param("sdddssi", $data, $prod, $rep, $liq, $mes, $meta_dia, $id);
+
         $stmt->execute();
     } else {
         // NOVO
         $stmt = $conn->prepare(
-            "INSERT INTO lancamentos (tipo, data, producao, repasse, liquido, mes)
-             VALUES (?, ?, ?, ?, ?, ?)"
-        );
-        $stmt->bind_param("ssddds", $tipo, $data, $prod, $rep, $liq, $mes);
+    "INSERT INTO lancamentos (tipo, data, producao, repasse, liquido, mes, meta_dia)
+     VALUES (?, ?, ?, ?, ?, ?, ?)"
+);
+$stmt->bind_param("ssdddss", $tipo, $data, $prod, $rep, $liq, $mes, $meta_dia);
+
         $stmt->execute();
     }
 
