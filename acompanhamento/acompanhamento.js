@@ -8,9 +8,22 @@ function mesAtual() {
     return new Date().toISOString().slice(0, 7);
 }
 
-function formatarData(dataStr) {
-    const [ano, mes, dia] = dataStr.split('-').map(Number);
-    return new Date(ano, mes - 1, dia).toLocaleDateString('pt-BR');
+function formatarData(data) {
+    if (!data) return '-';
+
+    // Se já for Date
+    if (data instanceof Date) {
+        return data.toLocaleDateString('pt-BR');
+    }
+
+    // Se for string YYYY-MM-DD
+    if (typeof data === 'string') {
+        const [ano, mes, dia] = data.split('-');
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    // fallback de segurança
+    return '-';
 }
 
 /* ===== CONTROLES ===== */
